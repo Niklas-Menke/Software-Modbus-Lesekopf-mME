@@ -712,6 +712,8 @@ Public Class FormMain
         Dim Result As DialogResult = MessageBox.Show("Soll die PIN """ & PINNumber.Value.ToString("0000") & """ zur modernen Messeinrichtung übertragen werden?", "PIN senden", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
         If Result = DialogResult.Yes Then
             GroupPin.Enabled = False
+            GroupCommunication.Enabled = False
+            GroupSettings.Enabled = False
             PINSend.Text = "Bitte warten..."
 
             Dim Buffer As UShort = PINNumber.Value
@@ -743,6 +745,8 @@ Public Class FormMain
             PinProgress.Value = 0
             PINSend.Text = "PIN senden"
             GroupPin.Enabled = True
+            GroupCommunication.Enabled = True
+            GroupSettings.Enabled = True
         End If
     End Sub
 

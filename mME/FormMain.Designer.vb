@@ -1994,7 +1994,7 @@ Partial Class FormMain
         Me.GroupLog.Size = New System.Drawing.Size(243, 58)
         Me.GroupLog.TabIndex = 6
         Me.GroupLog.TabStop = False
-        Me.GroupLog.Text = "Loggen"
+        Me.GroupLog.Text = "Datenlogger"
         '
         'LogFileOpen
         '
@@ -2052,7 +2052,7 @@ Partial Class FormMain
         Me.GroupLogger.Size = New System.Drawing.Size(614, 128)
         Me.GroupLogger.TabIndex = 7
         Me.GroupLogger.TabStop = False
-        Me.GroupLogger.Text = "Logger"
+        Me.GroupLogger.Text = "Ereignislogger"
         '
         'LoggerExport
         '
