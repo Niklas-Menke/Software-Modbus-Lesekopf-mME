@@ -2097,9 +2097,9 @@ Partial Class FormMain
         Me.LabelVer.AutoSize = True
         Me.LabelVer.Location = New System.Drawing.Point(383, 597)
         Me.LabelVer.Name = "LabelVer"
-        Me.LabelVer.Size = New System.Drawing.Size(76, 13)
+        Me.LabelVer.Size = New System.Drawing.Size(72, 13)
         Me.LabelVer.TabIndex = 11
-        Me.LabelVer.Text = "Version: BETA"
+        Me.LabelVer.Text = "Version: 1.0.0"
         '
         'ComInt
         '
