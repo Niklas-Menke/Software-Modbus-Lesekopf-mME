@@ -315,7 +315,7 @@ Partial Class FormMain
         '
         Me.ReadingHeadVersion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.ReadingHeadVersion.FormattingEnabled = True
-        Me.ReadingHeadVersion.Items.AddRange(New Object() {"2.3.0"})
+        Me.ReadingHeadVersion.Items.AddRange(New Object() {"2.3.2", "2.3.1", "2.3.0"})
         Me.ReadingHeadVersion.Location = New System.Drawing.Point(57, 40)
         Me.ReadingHeadVersion.Name = "ReadingHeadVersion"
         Me.ReadingHeadVersion.Size = New System.Drawing.Size(50, 21)
@@ -1713,7 +1713,7 @@ Partial Class FormMain
         'SettingTimestamp
         '
         Me.SettingTimestamp.Location = New System.Drawing.Point(99, 144)
-        Me.SettingTimestamp.Maximum = New Decimal(New Integer() {-1, 0, 0, 0})
+        Me.SettingTimestamp.Maximum = New Decimal(New Integer() {-1, -1, 0, 0})
         Me.SettingTimestamp.Name = "SettingTimestamp"
         Me.SettingTimestamp.Size = New System.Drawing.Size(126, 20)
         Me.SettingTimestamp.TabIndex = 24

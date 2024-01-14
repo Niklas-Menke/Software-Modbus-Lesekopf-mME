@@ -805,11 +805,26 @@ Public Class FormMain
         GroupSettingsParam.Enabled = False
         SettingWrite.Enabled = False
 
-        Dim Block11() As UShort = {SettingManID.Value, SettingDevID.Value, SettingHWVer.Value, SettingFWVer.Value}
-        Modbus_FC16(8192, Block11)
+        Dim timestamp As ULong = SettingTimestamp.Value
+        Dim mask As UShort = UShort.MaxValue
 
-        Dim Block12() As UShort = {SettingMeasInt.Value, SettingTimestamp.Value >> 48, SettingTimestamp.Value >> 32, SettingTimestamp.Value >> 16, SettingTimestamp.Value, SettingMeasIntAuto.Checked And 1, SettingAcPowCalc.Checked And 1}
-        Modbus_FC16(8244, Block12)
+        If ReadingHeadVersion.SelectedItem = "2.3.2" Then
+            Dim Block11() As UShort = {SettingManID.Value, SettingDevID.Value, SettingHWVer.Value, SettingFWVer.Value}
+            Modbus_FC16(8192, Block11)
+            Dim Block12() As UShort = {SettingMeasInt.Value, timestamp >> 48, (timestamp >> 32) And mask, (timestamp >> 16) And mask, timestamp And mask, Convert.ToInt32(SettingMeasIntAuto.Checked), Convert.ToInt32(SettingAcPowCalc.Checked)}
+            Modbus_FC16(8244, Block12)
+        Else
+            Dim buf() As UShort = {SettingManID.Value, SettingDevID.Value, SettingHWVer.Value}
+            Modbus_FC16(8192, buf)
+            buf = {SettingFWVer.Value}
+            Modbus_FC16(8195, buf)
+            buf = {SettingMeasInt.Value, SettingMeasInt.Value, timestamp >> 48}
+            Modbus_FC16(8244, buf)
+            buf = {(timestamp >> 32) And mask, (timestamp >> 16) And mask, timestamp And mask}
+            Modbus_FC16(8247, buf)
+            buf = {Convert.ToInt32(SettingMeasIntAuto.Checked), Convert.ToInt32(SettingAcPowCalc.Checked)}
+            Modbus_FC16(8250, buf)
+        End If
     End Sub
 
 
