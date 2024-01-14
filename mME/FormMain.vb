@@ -751,7 +751,14 @@ Public Class FormMain
                 Buffer /= 10
             Next
 
-            If Not Modbus_FC16(8251, PIN) Then
+            Dim addr As UInteger
+            If ReadingHeadVersion.SelectedItem = "2.2.0" Then
+                addr = 8211
+            Else
+                addr = 8251
+            End If
+
+            If Not Modbus_FC16(addr, PIN) Then
                 PinWait.Interval = 100
                 PinProgress.Step = 100
                 PinProgress.Maximum = Duration
