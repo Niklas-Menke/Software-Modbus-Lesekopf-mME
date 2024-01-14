@@ -249,11 +249,24 @@ Public Class FormMain
     ' Ruft alle Momentanwerte und Energiewerte vom Lesekopf über die zuvor initiierte Verbindung ab
     Private Sub Read_data()
         ' Temperatur, Aktualisiert
-        Dim TempActual() As UShort = Modbus_FC03(8262, 2)
+        Dim TempActual() As UShort = {0, 0}
+        If ReadingHeadVersion.SelectedItem = "2.2.0" Then
+            Dim buf() As UShort = Modbus_FC03(8206, 1)
+            TempActual(0) = buf(0)
+        Else
+            Dim buf() As UShort = Modbus_FC03(8262, 2)
+            TempActual(0) = buf(0)
+            TempActual(1) = buf(1)
+        End If
 
         ' Lesekopf-ID, Server-ID
         If FirstRequest Then
-            Dim IDs() As UShort = Modbus_FC03(8252, 10)
+            Dim IDs() As UShort
+            If ReadingHeadVersion.SelectedItem = "2.2.0" Then
+                IDs = Modbus_FC03(8196, 10)
+            Else
+                IDs = Modbus_FC03(8252, 10)
+            End If
             If IDs.Length = 10 Then
                 ReadingHeadID.Text = ""
                 ServerID.Text = ""
@@ -293,14 +306,26 @@ Public Class FormMain
         Datalogger_write(DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss") & ";")
 
         ' Zeitstempel
-        Dim TimestampArray() As UShort = Modbus_FC03(8245, 4)
-        If TimestampArray.Length = 4 Then
-            Dim Timestamp As ULong = (CType(TimestampArray(0), ULong) << 48) Or (CType(TimestampArray(1), ULong) << 32) Or (CType(TimestampArray(2), UInteger) << 16) Or TimestampArray(3)
-            ReadingHeadTimestamp.Text = DateTimeOffset.FromUnixTimeSeconds(Timestamp).DateTime.ToString("dd.MM.yyyy HH:mm:ss")
-            Datalogger_write(DateTimeOffset.FromUnixTimeSeconds(Timestamp).DateTime.ToString("dd.MM.yyyy HH:mm:ss") & ";")
+        If ReadingHeadVersion.SelectedItem = "2.2.0" Then
+            Dim TimestampArray() As UShort = Modbus_FC03(8208, 2)
+            If TimestampArray.Length = 2 Then
+                Dim Timestamp As ULong = (CType(TimestampArray(0), UInteger) << 16) Or TimestampArray(1)
+                ReadingHeadTimestamp.Text = DateTimeOffset.FromUnixTimeSeconds(Timestamp).DateTime.ToString("dd.MM.yyyy HH:mm:ss")
+                Datalogger_write(DateTimeOffset.FromUnixTimeSeconds(Timestamp).DateTime.ToString("dd.MM.yyyy HH:mm:ss") & ";")
+            Else
+                ReadingHeadTimestamp.Text = "N/A"
+                Datalogger_write("N/A;")
+            End If
         Else
-            ReadingHeadTimestamp.Text = "N/A"
-            Datalogger_write("N/A;")
+            Dim TimestampArray() As UShort = Modbus_FC03(8245, 4)
+            If TimestampArray.Length = 4 Then
+                Dim Timestamp As ULong = (CType(TimestampArray(0), ULong) << 48) Or (CType(TimestampArray(1), ULong) << 32) Or (CType(TimestampArray(2), UInteger) << 16) Or TimestampArray(3)
+                ReadingHeadTimestamp.Text = DateTimeOffset.FromUnixTimeSeconds(Timestamp).DateTime.ToString("dd.MM.yyyy HH:mm:ss")
+                Datalogger_write(DateTimeOffset.FromUnixTimeSeconds(Timestamp).DateTime.ToString("dd.MM.yyyy HH:mm:ss") & ";")
+            Else
+                ReadingHeadTimestamp.Text = "N/A"
+                Datalogger_write("N/A;")
+            End If
         End If
 
         ' Registerblock 1 (Wirk- und Blindleistung Gesamt)
@@ -762,40 +787,78 @@ Public Class FormMain
 
     ' Ruft die Parameter vom Lesekopf ab
     Private Sub SettingRead_Click(sender As Object, e As EventArgs) Handles SettingRead.Click
-        ' Registerblock 11 (Hersteller, Gerät, Hardware- und Softwareversion)
-        Dim Block11() As UShort = Modbus_FC03(8192, 4)
-        If Block11.Length = 4 Then
-            SettingManID.Value = Block11(0)
-            SettingDevID.Value = Block11(1)
-            SettingHWVer.Value = Block11(2)
-            SettingFWVer.Value = Block11(3)
-        Else
-            SettingManID.Value = 0
-            SettingDevID.Value = 0
-            SettingHWVer.Value = 0
-            SettingFWVer.Value = 0
-        End If
+        If ReadingHeadVersion.SelectedItem = "2.2.0" Then
+            ' Registerblock 11_1 (Hersteller, Gerät, Hardware- und Softwareversion)
+            Dim Block11_1() As UShort = Modbus_FC03(8192, 4)
+            If Block11_1.Length = 4 Then
+                SettingManID.Value = Block11_1(0)
+                SettingDevID.Value = Block11_1(1)
+                SettingHWVer.Value = Block11_1(2)
+                SettingFWVer.Value = Block11_1(3)
+            Else
+                SettingManID.Value = 0
+                SettingDevID.Value = 0
+                SettingHWVer.Value = 0
+                SettingFWVer.Value = 0
+            End If
 
-        ' Registerblock 12 (Messintervall, Unixzeit, Messintervall Modus, Gesamtwirkleistung, Lesekopf-ID, Server-ID, Temperatur, Aktualisiert)
-        Dim Block12() As UShort = Modbus_FC03(8244, 19)
-        If Block12.Length = 19 Then
-            SettingMeasInt.Value = Block12(0)
-            SettingTimestamp.Value = (CType(Block12(1), ULong) << 48) Or (CType(Block12(2), ULong) << 32) Or (CType(Block12(3), UInteger) << 16) Or Block12(4)
-            SettingMeasIntAuto.Checked = IIf(Block12(5), True, False)
-            SettingAcPowCalc.Checked = IIf(Block12(6), True, False)
-        Else
-            SettingMeasInt.Value = 0
-            SettingTimestamp.Value = 0
-            SettingMeasIntAuto.Checked = False
-            SettingAcPowCalc.Checked = False
-        End If
+            ' Registerblock 11_2 (Gesamtwirkleistung, Unixzeit)
+            Dim Block11_2() As UShort = Modbus_FC03(8207, 3)
+            If Block11_2.Length = 3 Then
+                SettingMeasInt.Value = 0
+                SettingTimestamp.Value = (CType(Block11_2(1), UInteger) << 16) Or Block11_2(2)
+                SettingMeasIntAuto.Checked = False
+                SettingAcPowCalc.Checked = IIf(Block11_2(0), True, False)
+            Else
+                SettingMeasInt.Value = 0
+                SettingTimestamp.Value = 0
+                SettingMeasIntAuto.Checked = False
+                SettingAcPowCalc.Checked = False
+            End If
 
-        If (Block11.Length = 4) And (Block12.Length = 19) Then
-            GroupSettingsParam.Enabled = True
-            SettingWrite.Enabled = True
+            If (Block11_1.Length = 4) And (Block11_2.Length = 3) Then
+                GroupSettingsParam.Enabled = True
+                SettingWrite.Enabled = True
+            Else
+                GroupSettingsParam.Enabled = False
+                SettingWrite.Enabled = False
+            End If
         Else
-            GroupSettingsParam.Enabled = False
-            SettingWrite.Enabled = False
+            ' Registerblock 11 (Hersteller, Gerät, Hardware- und Softwareversion)
+            Dim Block11() As UShort = Modbus_FC03(8192, 4)
+            If Block11.Length = 4 Then
+                SettingManID.Value = Block11(0)
+                SettingDevID.Value = Block11(1)
+                SettingHWVer.Value = Block11(2)
+                SettingFWVer.Value = Block11(3)
+            Else
+                SettingManID.Value = 0
+                SettingDevID.Value = 0
+                SettingHWVer.Value = 0
+                SettingFWVer.Value = 0
+            End If
+
+            ' Registerblock 12 (Messintervall, Unixzeit, Messintervall Modus, Gesamtwirkleistung, Lesekopf-ID, Server-ID, Temperatur, Aktualisiert)
+            Dim Block12() As UShort = Modbus_FC03(8244, 19)
+            If Block12.Length = 19 Then
+                SettingMeasInt.Value = Block12(0)
+                SettingTimestamp.Value = (CType(Block12(1), ULong) << 48) Or (CType(Block12(2), ULong) << 32) Or (CType(Block12(3), UInteger) << 16) Or Block12(4)
+                SettingMeasIntAuto.Checked = IIf(Block12(5), True, False)
+                SettingAcPowCalc.Checked = IIf(Block12(6), True, False)
+            Else
+                SettingMeasInt.Value = 0
+                SettingTimestamp.Value = 0
+                SettingMeasIntAuto.Checked = False
+                SettingAcPowCalc.Checked = False
+            End If
+
+            If (Block11.Length = 4) And (Block12.Length = 19) Then
+                GroupSettingsParam.Enabled = True
+                SettingWrite.Enabled = True
+            Else
+                GroupSettingsParam.Enabled = False
+                SettingWrite.Enabled = False
+            End If
         End If
     End Sub
 
@@ -813,7 +876,7 @@ Public Class FormMain
             Modbus_FC16(8192, Block11)
             Dim Block12() As UShort = {SettingMeasInt.Value, timestamp >> 48, (timestamp >> 32) And mask, (timestamp >> 16) And mask, timestamp And mask, Convert.ToInt32(SettingMeasIntAuto.Checked), Convert.ToInt32(SettingAcPowCalc.Checked)}
             Modbus_FC16(8244, Block12)
-        Else
+        ElseIf ReadingHeadVersion.SelectedItem = "2.3.1" Or ReadingHeadVersion.SelectedItem = "2.3.0" Then
             Dim buf() As UShort = {SettingManID.Value, SettingDevID.Value, SettingHWVer.Value}
             Modbus_FC16(8192, buf)
             buf = {SettingFWVer.Value}
@@ -824,6 +887,29 @@ Public Class FormMain
             Modbus_FC16(8247, buf)
             buf = {Convert.ToInt32(SettingMeasIntAuto.Checked), Convert.ToInt32(SettingAcPowCalc.Checked)}
             Modbus_FC16(8250, buf)
+        Else
+            Dim buf() As UShort = {SettingManID.Value, SettingDevID.Value}
+            Modbus_FC16(8192, buf)
+            buf = {Convert.ToInt32(SettingAcPowCalc.Checked), (timestamp >> 16) And mask, timestamp And mask}
+            Modbus_FC16(8207, buf)
+        End If
+    End Sub
+
+
+    ' De-/Aktivert Felder in Abhängioigkeit der FW-Version
+    Private Sub ReadingHeadVersion_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ReadingHeadVersion.SelectedIndexChanged
+        If ReadingHeadVersion.SelectedItem = "2.2.0" Then
+            SettingHWVer.Enabled = False
+            SettingFWVer.Enabled = False
+            SettingMeasInt.Enabled = False
+            SettingMeasInt.Value = 0
+            SettingMeasIntAuto.Enabled = False
+            SettingMeasIntAuto.Checked = False
+        Else
+            SettingHWVer.Enabled = True
+            SettingFWVer.Enabled = True
+            SettingMeasInt.Enabled = True
+            SettingMeasIntAuto.Enabled = True
         End If
     End Sub
 

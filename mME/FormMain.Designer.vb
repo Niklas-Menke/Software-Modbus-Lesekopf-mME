@@ -315,7 +315,7 @@ Partial Class FormMain
         '
         Me.ReadingHeadVersion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.ReadingHeadVersion.FormattingEnabled = True
-        Me.ReadingHeadVersion.Items.AddRange(New Object() {"2.3.2", "2.3.1", "2.3.0"})
+        Me.ReadingHeadVersion.Items.AddRange(New Object() {"2.3.2", "2.3.1", "2.3.0", "2.2.0"})
         Me.ReadingHeadVersion.Location = New System.Drawing.Point(57, 40)
         Me.ReadingHeadVersion.Name = "ReadingHeadVersion"
         Me.ReadingHeadVersion.Size = New System.Drawing.Size(50, 21)
