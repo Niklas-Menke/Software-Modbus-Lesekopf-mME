@@ -588,28 +588,28 @@ Public Class FormMain
         'Dim Block10() As UShort = New UShort() {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24}
         If Block10.Length = 24 Then
             Dim Buffer As ULong = (CType(Block10(0), ULong) << 48) Or (CType(Block10(1), ULong) << 32) Or (CType(Block10(2), UInteger) << 16) Or Block10(3)
-            AcEnPT0.Text = IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 1000.0, ULong))
-            Datalogger_write(IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 1000.0, ULong)) & ";")
+            AcEnPT0.Text = IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 10000.0, ULong))
+            Datalogger_write(IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 10000.0, ULong)) & ";")
 
             Buffer = (CType(Block10(4), ULong) << 48) Or (CType(Block10(5), ULong) << 32) Or (CType(Block10(6), UInteger) << 16) Or Block10(7)
-            AcEnNT0.Text = IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 1000.0, ULong))
-            Datalogger_write(IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 1000.0, ULong)) & ";")
+            AcEnNT0.Text = IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 10000.0, ULong))
+            Datalogger_write(IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 10000.0, ULong)) & ";")
 
             Buffer = (CType(Block10(8), ULong) << 48) Or (CType(Block10(9), ULong) << 32) Or (CType(Block10(10), UInteger) << 16) Or Block10(11)
-            AcEnPT1.Text = IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 1000.0, ULong))
-            Datalogger_write(IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 1000.0, ULong)) & ";")
+            AcEnPT1.Text = IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 10000.0, ULong))
+            Datalogger_write(IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 10000.0, ULong)) & ";")
 
             Buffer = (CType(Block10(12), ULong) << 48) Or (CType(Block10(13), ULong) << 32) Or (CType(Block10(14), UInteger) << 16) Or Block10(15)
-            AcEnNT1.Text = IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 1000.0, ULong))
-            Datalogger_write(IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 1000.0, ULong)) & ";")
+            AcEnNT1.Text = IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 10000.0, ULong))
+            Datalogger_write(IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 10000.0, ULong)) & ";")
 
             Buffer = (CType(Block10(16), ULong) << 48) Or (CType(Block10(17), ULong) << 32) Or (CType(Block10(18), UInteger) << 16) Or Block10(19)
-            AcEnPT2.Text = IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 1000.0, ULong))
-            Datalogger_write(IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 1000.0, ULong)) & ";")
+            AcEnPT2.Text = IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 10000.0, ULong))
+            Datalogger_write(IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 10000.0, ULong)) & ";")
 
             Buffer = (CType(Block10(20), ULong) << 48) Or (CType(Block10(21), ULong) << 32) Or (CType(Block10(22), UInteger) << 16) Or Block10(23)
-            AcEnNT2.Text = IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 1000.0, ULong))
-            Datalogger_write(IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 1000.0, ULong)) & ";")
+            AcEnNT2.Text = IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 10000.0, ULong))
+            Datalogger_write(IIf(Buffer = ULong.MaxValue, "N/A", CType(Buffer / 10000.0, ULong)) & ";")
         Else
             AcEnPT0.Text = "N/A"
             AcEnNT0.Text = "N/A"
