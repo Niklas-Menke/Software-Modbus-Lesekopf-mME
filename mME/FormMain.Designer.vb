@@ -2099,7 +2099,7 @@ Partial Class FormMain
         Me.LabelVer.Name = "LabelVer"
         Me.LabelVer.Size = New System.Drawing.Size(72, 13)
         Me.LabelVer.TabIndex = 11
-        Me.LabelVer.Text = "Version: 1.1.0"
+        Me.LabelVer.Text = "Version: 1.1.1"
         '
         'ComInt
         '
